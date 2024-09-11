@@ -6,6 +6,7 @@ import (
 	"errors"
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
+	"regexp"
 	"time"
 )
 
@@ -27,6 +28,30 @@ func GeneratorToken(user Model.Auth) (string, error) {
 }
 
 func GeneratorPassword(password string) (string, error) {
+
+	minLength, maxLength := 4, 16
+
+	if len(password) < minLength {
+		return "", errors.New("password must be at least 8 characters")
+	}
+	if len(password) > maxLength {
+		return "", errors.New("password must be less than 16 characters")
+	}
+	passUp, _ := regexp.MatchString(`[A-Z]`, password)
+	passLow, _ := regexp.MatchString(`[a-z]`, password)
+	hasNumber, _ := regexp.MatchString(`[0-9]`, password)
+
+	if !passUp {
+		//return fmt.Errorf("password must contain at least one uppercase letter")
+		return "", errors.New("password must contain at least one uppercase letter")
+	}
+	if !passLow {
+		return "", errors.New("password must contain at least one lowercase letter")
+	}
+	if !hasNumber {
+		return "", errors.New("password must contain at least one number")
+	}
+
 	hashPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return "", err

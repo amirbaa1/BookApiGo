@@ -4,6 +4,7 @@ import (
 	"Auth/Config"
 	"Auth/Model"
 	"Auth/Utils"
+	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
@@ -25,12 +26,13 @@ func Register(c *fiber.Ctx) error {
 			"error":      err.Error(),
 		})
 	}
-
-	if err := db.Where("username = ?", requestRegister.UserName).First(&user).Error; err != nil {
+	err := db.Where("username = ?", requestRegister.UserName).First(&user).Error
+	fmt.Println(err)
+	if err == nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"statusCode": fiber.StatusBadRequest,
 			"message":    "username already created",
-			"error":      err.Error(),
+			"error":      err,
 		})
 	}
 
