@@ -4,6 +4,7 @@ import (
 	"Book/Config"
 	"Book/Model"
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 	"log"
 )
@@ -157,6 +158,18 @@ func GetBookByPublisher(c *fiber.Ctx) error {
 }
 
 func CreateBook(c *fiber.Ctx) error {
+
+	user := c.Locals("user").(*jwt.Token)
+	claims := user.Claims.(jwt.MapClaims)
+	role := claims["Role"].(string)
+
+	if role != "Admin" {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+			"statusCode": fiber.StatusForbidden,
+			"message":    "Access denied, admin only",
+		})
+	}
+
 	db := Config.GetDB()
 
 	//var newbook Model.Book

@@ -20,7 +20,7 @@ func GeneratorToken(user Model.Auth) (string, error) {
 		"user-id":   user.Id,
 		"user_name": user.UserName,
 		"exp":       time.Now().Add(time.Minute * 15).Unix(),
-		"Role":      "User",
+		"Role":      user.Role,
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)

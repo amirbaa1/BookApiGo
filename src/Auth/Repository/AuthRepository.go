@@ -82,7 +82,7 @@ func Login(c *fiber.Ctx) error {
 		})
 	}
 
-	err := db.Where("user_name = ?", requestRegister.UserName).First(&user).Error
+	err := db.Where("username = ?", requestRegister.UserName).First(&user).Error
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"statusCode": fiber.StatusBadRequest,
